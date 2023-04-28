@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+  <meta charset="UTF-8">
+  <title>Register</title>
+</head>
+<body>
+<div class="form-bg">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6">
+        <div class="form-container">
+          <h3 class="title">My Account</h3>
+
+          <form class="form-horizontal" th:action="@{/register}" method="post" th:object="${user}">
+            <div class="form-icon">
+              <i class="fa fa-user-circle"></i>
+            </div>
+            <div class="form-group">
+              <span class="input-icon"><i class="fa fa-user"></i></span>
+              <label>
+                <input type="text" class="form-control" placeholder="Username" th:field="*{userName}" required>
+              </label>
+            </div>
+            <div class="form-group">
+              <span class="input-icon"><i class="fa fa-lock"></i></span>
+              <label>
+                <input type="password" class="form-control" placeholder="Password" th:field="*{password}" required>
+              </label>
+            </div>
+            <div class="form-group">
+              <span class="input-icon"><i class="fa fa-lock"></i></span>
+              <label>
+                <input type="email" class="form-control" placeholder="Email" th:field="*{email}">
+              </label>
+            </div>
+            <span class="forgot"><a th:href="@{/login}">Go to login</a> </span>
+            </br>
+            </br>
+            <button class="btn signin">Sign up</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}" />
+  <meta charset="UTF-8">
+  <title>Email verification</title>
+</head>
+<body>
+<div class="form-bg">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-offset-4 col-md-4 col-sm-offset-3 col-sm-6">
+        <div class="form-container">
+          <h3 class="title">Email verification</h3>
+
+          <form class="form-horizontal" action="/edit" method="POST">
+            <div class="form-icon">
+              <i class="fa fa-user-circle"></i>
+            </div>
+            <div class="form-group">
+              <span class="input-icon"><i class="fa fa-lock"></i></span>
+              <label>
+                <input class="form-control" type="email" id="email" name="email" placeholder="Enter your email">
+              </label>
+            </div>
+              <span class="forgot"><a th:href="@{/login}">Go to login</a> </span>
+            </br>
+            </br>
+
+            <button type="submit" class="btn signin">Verify</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
