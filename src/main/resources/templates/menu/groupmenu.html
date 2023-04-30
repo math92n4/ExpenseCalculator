@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/menu.css}" />
+</head>
+<body>
+<nav>
+  <div class="navicon">
+    <div></div>
+  </div>
+
+  <a th:href="@{/create-group}">Create a new group</a>
+  <a th:href="@{/your-groups}">Your groups</a>
+  <a th:href="@{/add-expense}">Add an expense</a>
+  <a th:href="@{/logout}">Log out</a>
+
+</nav>
+
+<div class="square">
+  <h2>Your group</h2>
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">Group Name</th>
+      <th scope="col">Add expense</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="group : ${group}">
+      <td th:text="${group.name}"></td>
+
+      <td>
+      <form action="#" method="POST" th:action="@{/group/{groupID}(groupID=${group.groupID})}">
+        <label>
+          <input type="text" name="expense" placeholder="Enter expense" required>
+        </label>
+        <div class="form-group">
+          <button type="submit">Add expense</button>
+        </div>
+      </form>
+
+      </td>
+
+    </tr>
+
+    </tbody>
+  </table>
+
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">Group member</th>
+      <th scope="col">Total expense</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="user : ${users}">
+      <td th:text="${user.userName}"></td>
+      <td th:text="${user.expense}"></td>
+    </tr>
+    </tbody>
+
+  </table>
+
+  <table class="table">
+    <thead>
+    <tr>
+      <th scope="col">Sender</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Receiver</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="transfer : ${transfers}">
+      <td th:text="${transfer.sender} + ' has to send'"></td>
+      <td th:text="${transfer.amount}"></td>
+      <td th:text="'to ' + ${transfer.receiver}"></td>
+    </tr>
+    </tbody>
+
+  </table>
+
+
+
+</div>
+
+
+</body>
+</html>

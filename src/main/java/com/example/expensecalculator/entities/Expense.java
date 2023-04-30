@@ -4,15 +4,15 @@ public class Expense {
 
     private int expenseID;
     private double expense;
-    private String desc;
-    private String date;
 
 
-    public Expense(int expenseID, double expense, String desc, String date) {
+    public Expense(int expenseID, double expense) {
         this.expenseID = expenseID;
         this.expense = expense;
-        this.desc = desc;
-        this.date = date;
+    }
+
+    public Expense() {
+
     }
 
     public int getExpenseID() {
@@ -29,21 +29,5 @@ public class Expense {
 
     public void setExpense(double expense) {
         this.expense = expense;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 }

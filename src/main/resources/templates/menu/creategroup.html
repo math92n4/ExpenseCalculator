@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/menu.css}" />
+</head>
+<body>
+<nav>
+  <div class="navicon">
+    <div></div>
+  </div>
+
+  <a th:href="@{/create-group}">Create a new group</a>
+  <a th:href="@{/your-groups}">Your groups</a>
+  <a th:href="@{/add-expense}">Add an expense</a>
+  <a th:href="@{/logout}">Log out</a>
+
+</nav>
+
+<div class="square">
+  <div class="form-container">
+
+    <h2>Create a new group</h2>
+
+    <form action="#" method="POST" th:action="@{/create-group}" th:object="${group}">
+
+      <div class="form-group">
+        <label>Group Name</label>
+        <label>
+          <input type="text" th:field="*{name}" placeholder="Enter group name" required>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>Group Description</label>
+        <label>
+        <textarea th:field="*{desc}" placeholder="Enter group description" required></textarea>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>Members</label>
+        <label>
+        <input type="text" th:field="*{members}" placeholder="Enter member usernames separated by commas (yourself excluded)" required>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <button type="submit">Create Group</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+  function addMember() {
+    var container = document.getElementById("members-container");
+    var input = document.createElement("input");
+    input.type = "email";
+    input.name = "members[]";
+    input.required = true;
+    container.appendChild(input);
+  }
+</script>
+
+
+  </form>
+
+</div>
+
+
+</body>
+</html>

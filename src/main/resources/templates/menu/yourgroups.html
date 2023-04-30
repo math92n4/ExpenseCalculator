@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/menu.css}" />
+</head>
+<body>
+<nav>
+    <div class="navicon">
+        <div></div>
+    </div>
+
+    <a th:href="@{/create-group}">Create a new group</a>
+    <a th:href="@{/your-groups}">Your groups</a>
+    <a th:href="@{/add-expense}">Add an expense</a>
+    <a th:href="@{/logout}">Log out</a>
+
+</nav>
+
+<div class="square">
+    <h2>Your groups</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">Group name</th>
+            <th scope="col">Group description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="group : ${groups}">
+            <td><a th:href="@{/group/{groupID}(groupID=${group.groupID})}" th:text="${group.name}"></a></td>
+            <td th:text="${group.desc}"></td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+
+
+</body>
+</html>

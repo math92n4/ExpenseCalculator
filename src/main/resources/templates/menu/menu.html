@@ -11,14 +11,16 @@
     <div></div>
   </div>
 
-  <a>Create a new group</a>
-  <a>Your groups</a>
-  <a>Add an expense</a>
-  <a>Log out</a>
+  <a th:href="@{/create-group}">Create a new group</a>
+  <a th:href="@{/your-groups}">Your groups</a>
+  <a th:href="@{/logout}">Log out</a>
 
 </nav>
 
-<div th:text="${user.userName}"></div>
+<div class="square">
+  <h2>Menu</h2>
+</div>
+
 
 </body>
 </html>
