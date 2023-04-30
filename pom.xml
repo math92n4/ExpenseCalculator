@@ -14,7 +14,7 @@
     <name>ExpenseCalculator</name>
     <description>ExpenseCalculator</description>
     <properties>
-        <java.version>19</java.version>
+        <java.version>17</java.version>
     </properties>
     <dependencies>
 
@@ -41,7 +41,9 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+
     </dependencies>
+
 
     <build>
         <plugins>
