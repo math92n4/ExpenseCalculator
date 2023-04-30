@@ -24,8 +24,6 @@ FOREIGN KEY (groupid) REFERENCES `groups`(groupid)
 CREATE TABLE expenses(
 expenseid INT PRIMARY KEY AUTO_INCREMENT,
 expense DECIMAL (10,2) NOT NULL,
-expensedesc TEXT,
-expensedate DATE NOT NULL,
 userid INT,
 groupid INT,
 FOREIGN KEY (userid) REFERENCES users(userid),
