@@ -40,10 +40,13 @@
       </div>
 
       <div class="form-group">
-        <label>Members</label>
-        <label>
-        <input type="text" th:field="*{members}" placeholder="Enter member usernames separated by commas (yourself excluded)" required>
-        </label>
+        <label>Add members to the group</label>
+        <div th:each="user : ${users}">
+          <label>
+            <input type="checkbox" name="listOfUsers" th:value="${user.userID}" />
+            <span th:text="${user.userName}"></span>
+          </label>
+        </div>
       </div>
 
       <div class="form-group">
@@ -52,22 +55,6 @@
 
     </form>
   </div>
-</div>
-
-<script>
-  function addMember() {
-    var container = document.getElementById("members-container");
-    var input = document.createElement("input");
-    input.type = "email";
-    input.name = "members[]";
-    input.required = true;
-    container.appendChild(input);
-  }
-</script>
-
-
-  </form>
-
 </div>
 
 

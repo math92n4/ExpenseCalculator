@@ -35,8 +35,10 @@
                 <input type="email" class="form-control" placeholder="Email" th:field="*{email}">
               </label>
             </div>
-            <span class="forgot"><a th:href="@{/login}">Go to login</a> </span>
+            <span class="forgot"><a th:href="@{/}">Go to login</a> </span>
             </br>
+            </br>
+            <p style="color:red" th:if="${notUnique}">Username already exists</p>
             </br>
             <button class="btn signin">Sign up</button>
           </form>

@@ -11,9 +11,6 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -25,12 +22,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/login")
+    @GetMapping("/")
     public String login() {
         return "login/login";
     }
 
-    @PostMapping("/login")
+    @PostMapping("/")
     public String login(@RequestParam("userName") String userName,
                            @RequestParam("password") String password,
                            HttpSession httpSession,
@@ -49,7 +46,7 @@ public class UserController {
     @GetMapping("/logout")
     public String logout(HttpSession httpSession) {
         httpSession.invalidate();
-        return "redirect:/login";
+        return "redirect:/";
     }
 
     @GetMapping("/register")
@@ -60,10 +57,18 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public String registeredUser(@ModelAttribute("user") User user) {
-        userService.registerUser(user);
-        return "redirect:/login";
+    public String registeredUser(@ModelAttribute("user") User user,
+                                 Model model) {
+        if (userService.doesUsernameExist(user.getUserName())) {
+            model.addAttribute("notUnique", true);
+            return "login/registeruser";
+        } else {
+            userService.registerUser(user);
+            return "redirect:/";
+        }
     }
+
+
 
     @GetMapping("/edit")
     public String editUser() {
@@ -95,7 +100,7 @@ public class UserController {
         User user = (User) httpSession.getAttribute("user");
         userService.editUser(user.getUserID(), editedUser);
         httpSession.invalidate();
-        return "redirect:/login";
+        return "redirect:/";
     }
 
     @GetMapping("/menu")
@@ -103,7 +108,7 @@ public class UserController {
                        Model model) {
         User user = (User) httpSession.getAttribute("user");
         if (user == null) {
-            return "redirect:/login";
+            return "redirect:/";
         } else {
             model.addAttribute("user", user);
             return "menu/menu";
@@ -113,34 +118,25 @@ public class UserController {
     @GetMapping("/create-group")
     public String createGroup(Model model) {
         GroupDTO groupDTO = new GroupDTO();
+        List<User> users = userService.getAllUsers();
+        model.addAttribute("users", users);
         model.addAttribute("group", groupDTO);
         return "menu/creategroup";
     }
 
     @PostMapping("/create-group")
     public String createGroup(@ModelAttribute("group") GroupDTO group,
-                              HttpSession httpSession) {
-
-        // input is taken separated by commas. therefore this string is split and a list is made
-        // this should maybe be handled in service layer
+                              HttpSession httpSession,
+                              @RequestParam List<Integer> listOfUsers) {
 
         User user = (User) httpSession.getAttribute("user");
 
         if (user == null) {
-            return "redirect:/login";
+            return "redirect:/";
         }
 
-        String replaceSpace = group.getMembers().replace(" ", "");
-        List<String> members = new ArrayList<>(Arrays.asList(replaceSpace.split(",")));
-        members.add(user.getUserName());
-
-        if (userService.doesExist(members)) {
-            Group newGroup = new Group();
-            newGroup.setName(group.getName());
-            newGroup.setDesc(group.getDesc());
-            newGroup.setMembers(members);
-            userService.createGroup(newGroup);
-        }
+        group.setListOfUsers(listOfUsers);
+        userService.createGroup(group);
 
         return "redirect:/menu";
     }
@@ -151,7 +147,7 @@ public class UserController {
                             Model model) {
         User user = (User) httpSession.getAttribute("user");
         if (user == null) {
-            return "redirect:/login";
+            return "redirect:/";
         }
         List<Group> groups = userService.getGroupsByUserID(user.getUserID());
         model.addAttribute("groups", groups);
@@ -166,7 +162,7 @@ public class UserController {
 
         User user = (User) httpSession.getAttribute("user");
         if (user == null) {
-            return "redirect:/login";
+            return "redirect:/";
         }
         Group group = userService.getGroupByGroupID(groupid);
         List<UserExpenseDTO> users = userService.getUsersAndExpensesByGroupID(groupid);
@@ -188,7 +184,7 @@ public class UserController {
 
         User user = (User) httpSession.getAttribute("user");
         if (user == null) {
-            return "redirect:/login";
+            return "redirect:/";
         }
 
         userService.createExpense(expense, user.getUserID(), groupid);

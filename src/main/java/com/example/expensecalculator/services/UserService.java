@@ -1,5 +1,6 @@
 package com.example.expensecalculator.services;
 
+import com.example.expensecalculator.dtos.GroupDTO;
 import com.example.expensecalculator.dtos.GroupTransferDTO;
 import com.example.expensecalculator.dtos.TransferDTO;
 import com.example.expensecalculator.dtos.UserExpenseDTO;
@@ -49,19 +50,19 @@ public class UserService {
         return null;
     }
 
-    public boolean doesExist(List<String> userNames) {
-        return userRepository.doesExist(userNames);
+    public boolean doesUsernameExist(String userName) {
+        return userRepository.doesUsernameExist(userName);
     }
 
     public User getUserByEmail(String email) {
         return userRepository.getUserByEmail(email);
     }
 
-    public List<User> getUsersByGroupID(int groupid) {
-        return userRepository.getUsersByGroupID(groupid);
+    public List<User> getAllUsers() {
+        return userRepository.getAllUsers();
     }
 
-    public void createGroup(Group group) {
+    public void createGroup(GroupDTO group) {
         userRepository.createGroup(group);
     }
 

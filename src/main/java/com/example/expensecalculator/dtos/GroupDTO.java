@@ -1,17 +1,19 @@
 package com.example.expensecalculator.dtos;
 
+import java.util.List;
+
 public class GroupDTO {
 
     private int groupID;
     private String name;
     private String desc;
-    private String members;
+    private List<Integer> listOfUsers;
 
-    public GroupDTO(int groupID, String name, String desc, String members) {
+    public GroupDTO(int groupID, String name, String desc, List<Integer> listOfUsers) {
         this.groupID = groupID;
         this.name = name;
         this.desc = desc;
-        this.members = members;
+        this.listOfUsers = listOfUsers;
     }
 
     public GroupDTO() {
@@ -42,11 +44,11 @@ public class GroupDTO {
         this.desc = desc;
     }
 
-    public String getMembers() {
-        return members;
+    public List<Integer> getListOfUsers() {
+        return listOfUsers;
     }
 
-    public void setMembers(String members) {
-        this.members = members;
+    public void setListOfUsers(List<Integer> listOfUsers) {
+        this.listOfUsers = listOfUsers;
     }
 }

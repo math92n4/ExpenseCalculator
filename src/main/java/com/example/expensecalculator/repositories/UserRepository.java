@@ -33,6 +33,23 @@ public class UserRepository {
 
     }
 
+    public boolean doesUsernameExist(String userName) {
+
+        try {
+            Connection con = DatabaseCon.getConnection();
+            String SQL = "SELECT userName FROM users WHERE userName = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(SQL);
+            preparedStatement.setString(1, userName);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public void editUser(int id, User editedUser) {
 
         try {
@@ -91,19 +108,19 @@ public class UserRepository {
         return null;
     }
 
-    public List<User> getUsersByGroupID(int groupID) {
+    public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
+
         try {
             Connection con = DatabaseCon.getConnection();
-            String SQL = "SELECT users.userid, userName FROM users INNER JOIN user_group ON users.userid = user_group.userid WHERE user_group.groupid = ?";
+            String SQL = "SELECT * FROM users";
             PreparedStatement preparedStatement = con.prepareStatement(SQL);
-            preparedStatement.setInt(1,groupID);
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
-                User user = new User();
-                user.setUserID(resultSet.getInt(1));
-                user.setUserName(resultSet.getString(2));
-                users.add(user);
+                users.add(new User(resultSet.getInt("userid"),
+                        resultSet.getString("username"),
+                        resultSet.getString("password"),
+                        resultSet.getString("email")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -112,29 +129,7 @@ public class UserRepository {
     }
 
 
-    public boolean doesExist(List<String> userNames) {
-
-        try {
-            Connection con = DatabaseCon.getConnection();
-            for (String userName : userNames) {
-                String SQL = "SELECT username FROM users WHERE username = ?";
-                try (PreparedStatement preparedStatement = con.prepareStatement(SQL)) {
-                    preparedStatement.setString(1, userName);
-                    try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                        if (!resultSet.next()) {
-                            return false;
-                        }
-                    }
-                }
-
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
-
-    public void createGroup(Group group) {
+    public void createGroup(GroupDTO group) {
 
         try {
             Connection con = DatabaseCon.getConnection();
@@ -153,23 +148,12 @@ public class UserRepository {
             }
 
             //insert ids into user_group table
-            String insertUserGroup = "INSERT INTO user_group (userid, groupid) VALUES (?,?)";
-            PreparedStatement userGroup = con.prepareStatement(insertUserGroup);
-            for (String member : group.getMembers()) {
-                //find user
-                String findUser = "SELECT userid FROM users WHERE username = ?";
-                PreparedStatement findUserStatement = con.prepareStatement(findUser);
-                findUserStatement.setString(1, member);
-                ResultSet userResult = findUserStatement.executeQuery();
-
-                int userID = 0;
-                if (userResult.next()) {
-                    userID = userResult.getInt("userid");
-                }
-
-                userGroup.setInt(1, userID);
-                userGroup.setInt(2, groupID);
-                userGroup.executeUpdate();
+            for (Integer user : group.getListOfUsers()) {
+                String insertUserGroup = "INSERT INTO user_group (userid, groupid) VALUES (?,?)";
+                PreparedStatement insertJoin = con.prepareStatement(insertUserGroup);
+                insertJoin.setInt(1,user);
+                insertJoin.setInt(2, groupID);
+                insertJoin.executeUpdate();
             }
 
         } catch (SQLException e) {
@@ -220,36 +204,73 @@ public class UserRepository {
 
     public List<UserExpenseDTO> getUsersAndExpensesByGroupID(int groupid) {
 
-        List<UserExpenseDTO> users = new ArrayList<>();
+        List<UserExpenseDTO> userExpenses = new ArrayList<>();
+        List<User> users = new ArrayList<>();
 
         try {
             Connection con = DatabaseCon.getConnection();
-            String SQL = "SELECT users.userid, users.username, SUM(expenses.expense)\n" +
-                    "FROM users\n" +
-                    "INNER JOIN expenses ON users.userid = expenses.userid\n" +
-                    "INNER JOIN user_group ON users.userid = user_group.userid\n" +
-                    "INNER JOIN `groups` ON user_group.groupid = `groups`.groupid\n" +
-                    "WHERE `groups`.groupid = ?\n" +
-                    "GROUP BY users.userid, users.username\n" +
-                    "ORDER BY users.userid";
+
+            //get users from group
+            String SQL = "SELECT user_group.userid, users.username FROM user_group" +
+                    " INNER JOIN users ON user_group.userid = users.userid WHERE user_group.groupid = ?";
             PreparedStatement preparedStatement = con.prepareStatement(SQL);
-            preparedStatement.setInt(1,groupid);
+            preparedStatement.setInt(1, groupid);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
-                UserExpenseDTO user = new UserExpenseDTO(resultSet.getInt(1),
-                        resultSet.getString(2),
-                        resultSet.getDouble(3));
+                User user = new User();
+                user.setUserID(resultSet.getInt("userid"));
+                user.setUserName(resultSet.getString("username"));
                 users.add(user);
             }
+
+            for (User user : users) {
+                //get expense for each user
+                String expenseSQL = "SELECT expense FROM expenses WHERE userid = ? AND groupid = ?";
+                PreparedStatement expenseStatement = con.prepareStatement(expenseSQL);
+                expenseStatement.setInt(1, user.getUserID());
+                expenseStatement.setInt(2, groupid);
+                ResultSet expenseResult = expenseStatement.executeQuery();
+
+                if (expenseResult.next()) {
+                    double expense = expenseResult.getDouble("expense");
+                    UserExpenseDTO userExpense = new UserExpenseDTO(user.getUserID(), user.getUserName(), expense);
+                    userExpenses.add(userExpense);
+                }
+            }
+
+
+
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return users;
+        return userExpenses;
     }
 
     public void createExpense(double expense, int userid, int groupid) {
+
+        try {
+            Connection con = DatabaseCon.getConnection();
+            String SQL = "UPDATE expenses SET expense = expense + ? WHERE userid = ? AND groupid = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(SQL);
+            preparedStatement.setDouble(1, expense);
+            preparedStatement.setInt(2,userid);
+            preparedStatement.setInt(3,groupid);
+            int rowsUpdated = preparedStatement.executeUpdate();
+
+            if (rowsUpdated == 0) {
+                createExpenseIfTheresNoRow(expense, userid, groupid);
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void createExpenseIfTheresNoRow(double expense, int userid, int groupid) {
 
         try {
             Connection con = DatabaseCon.getConnection();
