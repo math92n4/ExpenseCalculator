@@ -286,4 +286,32 @@ public class UserRepository {
 
     }
 
+
+    public void deleteGroup(int groupid) {
+
+        try {
+            Connection con = DatabaseCon.getConnection();
+
+            // join
+            String join = "DELETE FROM user_group WHERE groupid = ?";
+            PreparedStatement statementJoin = con.prepareStatement(join);
+            statementJoin.setInt(1, groupid);
+            statementJoin.executeUpdate();
+            // expense
+            String expense = "DELETE FROM expenses WHERE groupid = ?";
+            PreparedStatement statementExpense = con.prepareStatement(expense);
+            statementExpense.setInt(1, groupid);
+            statementExpense.executeUpdate();
+            // grp
+            String grp = "DELETE FROM `groups` WHERE groupid = ?";
+            PreparedStatement statementGrp = con.prepareStatement(grp);
+            statementGrp.setInt(1, groupid);
+            statementGrp.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

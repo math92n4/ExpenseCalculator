@@ -192,5 +192,18 @@ public class UserController {
         return "redirect:/group/{groupid}";
     }
 
+    @PostMapping("/group/{groupid}/delete")
+    public String deleteGroup(@PathVariable int groupid,
+                              HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/";
+        }
+
+        userService.deleteGroup(groupid);
+
+        return "redirect:/menu";
+    }
+
 
 }

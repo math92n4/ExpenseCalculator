@@ -97,4 +97,8 @@ public class UserService {
         GroupTransferDTO group = new GroupTransferDTO(amountToShare,usersSet);
         return group.calculateTransfers();
     }
+
+    public void deleteGroup(int groupid) {
+        userRepository.deleteGroup(groupid);
+    }
 }
