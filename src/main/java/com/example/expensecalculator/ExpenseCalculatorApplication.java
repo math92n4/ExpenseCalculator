@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ExpenseCalculatorApplication {
 
 
-//test
+//deployment
     public static void main(String[] args) {
         SpringApplication.run(ExpenseCalculatorApplication.class, args);
     }
